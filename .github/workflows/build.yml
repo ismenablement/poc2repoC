@@ -37,7 +37,9 @@ jobs:
       run: |
         ls -l
         echo "Building poc2repoC..."
+        echo "repoC.txt" 
         cat repoC.txt || true
+        echo ""
         echo "Workflow run: ${{ github.run_number }} - ${{ github.run_id }}" >> cache.txt
         cat cache.txt
         sleep 5
