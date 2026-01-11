@@ -1,0 +1,51 @@
+name: Build
+
+run-name: Build ${{ inputs.branch }}
+
+on:
+  workflow_call:
+    inputs:
+      branch:
+        description: 'Branch to checkout and build'
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to checkout and build'
+        required: false
+        default: 'main'
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        repository: ismenablement/poc2repoC
+        ref: ${{ inputs.branch }}
+    - name: Restore cache
+      uses: actions/cache@v4
+      with:
+        path: cache.txt
+        key: cache-txt-poc2repoC-${{ github.run_id }}
+        restore-keys: |
+          cache-txt-poc2repoC-
+    - name: Simulate build
+      run: |
+        ls -l
+        echo "Building poc2repoC..."
+        cat repoC.txt || true
+        echo "Workflow run: ${{ github.run_number }} - ${{ github.run_id }}" >> cache.txt
+        cat cache.txt
+        sleep 5
+        echo "Build complete."
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts-poc2repoC
+        path: |
+          cache.txt
+          repoC.txt
