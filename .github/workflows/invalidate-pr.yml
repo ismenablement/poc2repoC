@@ -9,8 +9,15 @@ jobs:
   invalidate-prs:
     runs-on: ubuntu-latest
     steps:
+    - name: Generate GitHub App token
+      id: app-token
+      uses: actions/create-github-app-token@v1
+      with:
+        app-id: ${{ secrets.APP_ID }}
+        private-key: ${{ secrets.PRIVATE_KEY }}
+        repositories: poc2orch
     - name: Dispatch invalidate
       run: |
         gh api /repos/${{ github.repository_owner }}/poc2orch/dispatches -f event_type=invalidate -f client_payload[action]=invalidate -f client_payload[branch]=${{ github.head_ref }}
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ steps.app-token.outputs.token }}
